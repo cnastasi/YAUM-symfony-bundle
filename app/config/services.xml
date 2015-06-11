@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Factories -->
+        <service id="yaum.user_session.factory" class="YAUM\Factory\BasicUserSessionFactory"/>
+
+        <!-- Repositories -->
+        <service id="yaum.user.repository" class="YAUM\Symfony\Repository\UserRepository">
+            <factory service="doctrine" method="getRepository"/>
+            <argument type="string">YAUM\Model\BasicUser</argument>
+        </service>
+        <service id="yaum.user_session.repository" class="YAUM\Repository\SimpleUserSessionRepository"/>
+
+        <!-- Services-->
+        <service id="yaum.credential_checker" class="YAUM\Service\BasicCredentialChecker">
+            <argument type="service" id="yaum.user.repository"/>
+        </service>
+
+        <service id="yaum.user.service" class="YAUM\Service\UserServiceDefault">
+            <argument type="service" id="yaum.credential_checker"/>
+            <argument type="service" id="yaum.user_session.factory"/>
+            <argument type="service" id="yaum.user_session.manager"/>
+        </service>
+
+        <!-- Managers -->
+        <service id="yaum.user_session.manager" class="YAUM\Service\BasicUserSessionManager">
+            <argument type="service" id="yaum.user_session.repository"/>
+        </service>
+
+        <!-- Controllers -->
+        <service id="api.user.controller" class="YAUM\Symfony\Controller\UserController">
+            <argument type="service" id="yaum.user.service"/>
+        </service>
+    </services>
+</container>

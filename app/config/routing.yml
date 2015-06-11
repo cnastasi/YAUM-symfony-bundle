@@ -1,0 +1,3 @@
+api:
+    path:     /api/login/{username}/{password}
+    defaults: { _controller: default_controller:login }
